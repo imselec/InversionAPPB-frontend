@@ -5,10 +5,9 @@ const config: CapacitorConfig = {
   appName: 'InversionAPP',
   webDir: 'dist',
   server: {
-    // In development, point to local Vite server for live reload
-    // Remove this block before building the final APK
-    // url: 'http://10.0.2.2:5173',
-    // cleartext: true,
+    // Loads the deployed frontend directly — no need to bundle dist/ in the APK
+    url: 'https://inversionappb-frontend.onrender.com',
+    cleartext: false,
   },
   plugins: {
     PushNotifications: {

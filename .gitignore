@@ -8,5 +8,8 @@ dist-ssr/
 tsc_errors.log
 test-api.js
 .vscode/
-android/
-ios/
+# Android build outputs only (keep source)
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
