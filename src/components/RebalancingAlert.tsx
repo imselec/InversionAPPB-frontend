@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import apiClient from '@/services/apiClient'
+import { get } from '@/services/apiClient'
 import { Spinner } from '@/components/ui/Spinner'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { cn } from '@/utils/cn'
@@ -18,7 +18,7 @@ interface BalanceStatus {
 export function RebalancingAlert() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['rebalancing-status'],
-    queryFn: () => apiClient.get<BalanceStatus>('/rebalancing/status'),
+    queryFn: () => get<BalanceStatus>('/rebalancing/status'),
   })
 
   if (isLoading) return <div className="flex justify-center h-40 items-center"><Spinner size="lg" /></div>

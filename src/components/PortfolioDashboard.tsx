@@ -5,7 +5,6 @@ import { Spinner } from '@/components/ui/Spinner'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { StatCard } from '@/components/ui/StatCard'
 import { formatCurrency, formatPct, gainLossClass } from '@/utils/format'
-import { useEffect } from 'react'
 
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 
@@ -22,7 +21,6 @@ export function PortfolioDashboard() {
     data: dashboard,
     isLoading,
     error,
-    refetch,
   } = useQuery({
     queryKey: ['portfolio-dashboard'],
     queryFn: portfolioService.getDashboard,
