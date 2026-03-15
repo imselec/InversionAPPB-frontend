@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.*
+!.env.example
+tsc_errors.log
+test-api.js
+.vscode/
+android/
+ios/
