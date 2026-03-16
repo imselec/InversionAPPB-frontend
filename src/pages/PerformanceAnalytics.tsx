@@ -47,11 +47,11 @@ export default function PerformanceAnalytics() {
     queryKey: ['perfMetrics', period], queryFn: () => analyticsService.getPerformance(period)
   });
   
-  const { data: returnsRes, isLoading: returnsLoading } = useQuery({
+  const { data: returnsRes } = useQuery({
     queryKey: ['perfReturns'], queryFn: analyticsService.getReturns
   });
 
-  const { data: volRes, isLoading: volLoading } = useQuery({
+  const { data: volRes } = useQuery({
     queryKey: ['perfVolatility'], queryFn: analyticsService.getVolatility
   });
 

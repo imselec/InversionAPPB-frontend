@@ -41,8 +41,8 @@ export default function InvestmentHistory() {
   const { data: dashRes, isLoading: dashLoading, isError: dashError } = useQuery({
     queryKey: ['portfolioDashboard'], queryFn: portfolioService.getDashboard
   });
-  
-  const { data: histRes, isLoading: histLoading } = useQuery({
+
+  const { data: histRes } = useQuery({
     queryKey: ['portfolioHistory'], queryFn: () => portfolioService.getHistory()
   });
 
