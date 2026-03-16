@@ -10,6 +10,9 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      retryDelay: 2000,
+      staleTime: 60000,        // 1 min — don't refetch on every mount
+      gcTime: 300000,          // 5 min cache
     },
   },
 });

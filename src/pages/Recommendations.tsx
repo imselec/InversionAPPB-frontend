@@ -40,8 +40,8 @@ export default function Recommendations() {
     generateMutate(budget);
   };
 
-  const isLoading = latestLoading || newLoading || sellLoading;
-  
+  const isLoading = latestLoading;  // Only block on primary query
+
   const latest = latestRes;
   const newTickers = Array.isArray(newTickersRes) ? newTickersRes : [];
   const sellRecomms = Array.isArray(sellRes) ? sellRes : [];

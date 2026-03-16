@@ -46,7 +46,7 @@ export default function InvestmentHistory() {
     queryKey: ['portfolioHistory'], queryFn: () => portfolioService.getHistory()
   });
 
-  const isLoading = dashLoading || histLoading;
+  const isLoading = dashLoading; // Only block on primary query
 
   const dashboard = dashRes;
   const history = Array.isArray(histRes) ? histRes : [];

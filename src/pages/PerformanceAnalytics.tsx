@@ -55,7 +55,7 @@ export default function PerformanceAnalytics() {
     queryKey: ['perfVolatility'], queryFn: analyticsService.getVolatility
   });
 
-  const isLoading = perfLoading || returnsLoading || volLoading;
+  const isLoading = perfLoading; // Only block on primary query
 
   const comparisonData = useMemo(() => generateComparisonData(period), [period]);
 

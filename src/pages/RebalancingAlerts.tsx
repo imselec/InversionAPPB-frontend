@@ -18,7 +18,7 @@ export default function RebalancingAlerts() {
     queryKey: ['rebalanceTrades'], queryFn: recommendationService.getSell // Reusing getSell as proxy for trades if needed, or hypothetical endpoint
   });
 
-  const isLoading = allocLoading || tradesLoading;
+  const isLoading = allocLoading; // Only block on primary query
 
   if (isLoading) {
     return (
