@@ -4,18 +4,9 @@ const config: CapacitorConfig = {
   appId: 'com.imselec.inversionapp',
   appName: 'InversionAPP',
   webDir: 'dist',
-  server: {
-    // Loads the deployed frontend directly — no need to bundle dist/ in the APK
-    url: 'https://inversionappb-frontend.onrender.com',
-    cleartext: false,
-  },
-  plugins: {
-    PushNotifications: {
-      presentationOptions: ['badge', 'sound', 'alert'],
-    },
-  },
+  // No server.url — loads bundled dist/ assets from APK directly (faster, works offline)
   android: {
-    allowMixedContent: false,
+    allowMixedContent: true,
     captureInput: true,
     webContentsDebuggingEnabled: false,
   },

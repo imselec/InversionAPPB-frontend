@@ -56,7 +56,7 @@ export function PortfolioDashboard() {
         />
         <StatCard
           label="Coste Base"
-          value={formatCurrency(dashboard.total_cost_basis)}
+          value={formatCurrency(dashboard.total_invested)}
         />
       </div>
 
@@ -90,8 +90,8 @@ export function PortfolioDashboard() {
                 <span className="font-mono text-sm text-text-primary">
                   {formatCurrency(h.market_value)}
                 </span>
-                <span className={`text-xs font-mono ${gainLossClass(h.gain_loss_pct)}`}>
-                  {formatPct(h.gain_loss_pct)}
+                <span className={`text-xs font-mono ${gainLossClass(h.gain_loss_pct ?? 0)}`}>
+                  {formatPct(h.gain_loss_pct ?? 0)}
                 </span>
               </div>
             </div>

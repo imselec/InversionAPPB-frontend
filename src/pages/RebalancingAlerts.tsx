@@ -35,7 +35,7 @@ export default function RebalancingAlerts() {
   }
 
   // Ensure allocations sum up correctly or map them
-  const allocations = [...(allocRes || [])].sort((a,b) => b.deviation - a.deviation);
+  const allocations = [...(Array.isArray(allocRes) ? allocRes : [])].sort((a,b) => b.deviation - a.deviation);
   
   // Calculate status
   const alerts = allocations.filter(a => {

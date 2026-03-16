@@ -14,6 +14,13 @@ const queryClient = new QueryClient({
   },
 });
 
+// Unregister any stale service workers (they don't work with file:// / Capacitor)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((reg) => reg.unregister());
+  }).catch(() => {});
+}
+
 // Register push notifications on native platforms (Android/iOS)
 registerPushNotifications().catch(console.error);
 

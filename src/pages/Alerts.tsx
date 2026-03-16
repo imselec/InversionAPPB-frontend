@@ -80,8 +80,8 @@ export default function Alerts() {
     return <ErrorMessage message="Failed to load alerts data." />;
   }
 
-  const alerts = alertsRes || [];
-  const history = historyRes || [];
+  const alerts = Array.isArray(alertsRes) ? alertsRes : [];
+  const history = Array.isArray(historyRes) ? historyRes : [];
   const unreadCount = history.filter(h => !h.read).length;
 
   return (

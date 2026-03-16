@@ -49,7 +49,7 @@ export default function InvestmentHistory() {
   const isLoading = dashLoading || histLoading;
 
   const dashboard = dashRes;
-  const history = histRes || [];
+  const history = Array.isArray(histRes) ? histRes : [];
   
   const chartData = useMemo(() => {
     if (!dashboard) return [];
@@ -76,7 +76,7 @@ export default function InvestmentHistory() {
   }
 
   const currentVal = dashboard?.total_value || 0;
-  const costBasis = dashboard?.total_cost_basis || 0;
+  const costBasis = dashboard?.total_invested || 0;
   const totalReturnPct = dashboard?.total_gain_loss_pct || 0;
 
   // Process history by month

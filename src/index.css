@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* System font stack — no external font dependency for Capacitor/offline */
 @layer base {
   * {
     @apply border-border;

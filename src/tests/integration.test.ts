@@ -172,4 +172,61 @@ describe('Error handling scenarios (Task 25.3)', () => {
     const data = await dividendService.getSummary()
     expect(data).toBeDefined()
   })
+
+  it('handles 404 not found for recommendations', async () => {
+    server.use(
+      http.get('*/recommendations/latest', () =>
+        HttpResponse.json({ detail: 'Not found' }, { status: 404 })),
+    )
+    await expect(recommendationService.getLatest()).rejects.toBeDefined()
+  })
+
+  it('handles 500 internal server error for analytics', async () => {
+    server.use(
+      http.get('*/analytics/performance', () =>
+        HttpResponse.json({ detail: 'Internal server error' }, { status: 500 })),
+    )
+    await expect(analyticsService.getPerformance()).rejects.toBeDefined()
+  })
+
+  it('handles 422 validation error on alert creation', async () => {
+    server.use(
+      http.post('*/alerts', () =>
+        HttpResponse.json({ detail: 'Validation error: target_price required' }, { status: 422 })),
+    )
+    await expect(
+      alertService.createAlert({ alert_type: 'price', ticker: 'AVGO', enabled: true }),
+    ).rejects.toBeDefined()
+  })
+
+  it('handles 409 conflict on duplicate watchlist entry', async () => {
+    server.use(
+      http.post('*/watchlist', () =>
+        HttpResponse.json({ detail: 'Ticker already in watchlist' }, { status: 409 })),
+    )
+    await expect(watchlistService.addTicker('AVGO')).rejects.toBeDefined()
+  })
+
+  it('handles network timeout gracefully', async () => {
+    server.use(
+      http.get('*/portfolio/dashboard', () => HttpResponse.error()),
+    )
+    await expect(portfolioService.getDashboard()).rejects.toBeDefined()
+  })
+
+  it('handles empty response body on delete', async () => {
+    server.use(
+      http.delete('*/watchlist/:ticker', () => new HttpResponse(null, { status: 204 })),
+    )
+    // 204 No Content — should resolve without throwing
+    await expect(watchlistService.removeTicker('MSFT')).resolves.toBeDefined()
+  })
+
+  it('handles budget update with invalid value (400)', async () => {
+    server.use(
+      http.put('*/settings/budget', () =>
+        HttpResponse.json({ detail: 'Budget must be at least $50' }, { status: 400 })),
+    )
+    await expect(settingsService.updateBudget(10)).rejects.toBeDefined()
+  })
 })

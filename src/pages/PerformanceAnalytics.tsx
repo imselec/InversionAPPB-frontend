@@ -86,7 +86,7 @@ export default function PerformanceAnalytics() {
   }
 
   const metrics = perfRes;
-  const returns = returnsRes || [];
+  const returns = Array.isArray(returnsRes) ? returnsRes : [];
   const vol = volRes;
 
   const sortedReturns = [...returns].sort((a: any, b: any) => {

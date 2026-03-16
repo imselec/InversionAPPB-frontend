@@ -81,7 +81,8 @@ export default function PortfolioDashboard() {
   const dashboard = dashboardResponse;
   if (!dashboard) return null;
 
-  const sectorData = processSectorData(dashboard.holdings);
+  const holdings = Array.isArray(dashboard.holdings) ? dashboard.holdings : [];
+  const sectorData = processSectorData(holdings);
   const totalReturnIsPositive = dashboard.total_gain_loss >= 0;
 
   return (
@@ -156,13 +157,13 @@ export default function PortfolioDashboard() {
       {/* Holdings Table */}
       <div className="card overflow-hidden !p-0">
         <div className="p-4 border-b border-border flex justify-between items-center">
-          <h3 className="text-base font-semibold">Holdings ({dashboard.holdings.length})</h3>
+          <h3 className="text-base font-semibold">Holdings ({holdings.length})</h3>
         </div>
         
         <div className="flex flex-col">
-          {dashboard.holdings.map((holding) => {
+          {holdings.map((holding) => {
             const isExpanded = expandedRow === holding.ticker;
-            const isGain = holding.gain_loss >= 0;
+            const isGain = (holding.gain_loss ?? 0) >= 0;
             
             return (
               <div key={holding.ticker} className="border-b last:border-b-0 border-border">
@@ -196,7 +197,7 @@ export default function PortfolioDashboard() {
                     <div className="text-xs text-text-secondary mt-1">{formatCurrency(holding.current_price)}</div>
                     <div className={cn("text-xs font-medium mt-1 inline-flex items-center", isGain ? "text-success" : "text-danger")}>
                       {isGain ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                      {formatPercentage(holding.gain_loss_pct)}
+                      {formatPercentage(holding.gain_loss_pct ?? 0)}
                     </div>
                   </div>
                 </div>
@@ -206,17 +207,17 @@ export default function PortfolioDashboard() {
                   <div className="p-4 bg-background/50 text-sm grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-border">
                     <div>
                       <div className="text-text-muted text-xs mb-1">Cost Basis</div>
-                      <div className="font-mono">{formatCurrency(holding.cost_basis)}</div>
+                      <div className="font-mono">{formatCurrency(holding.cost_basis ?? 0)}</div>
                     </div>
                     <div>
                       <div className="text-text-muted text-xs mb-1">Total Return</div>
                       <div className={cn("font-mono font-medium", isGain ? "text-success" : "text-danger")}>
-                        {formatCurrency(holding.gain_loss)}
+                        {formatCurrency(holding.gain_loss ?? 0)}
                       </div>
                     </div>
                     <div>
                       <div className="text-text-muted text-xs mb-1">Avg Price</div>
-                      <div className="font-mono">{formatCurrency(holding.avg_price)}</div>
+                      <div className="font-mono">{formatCurrency(holding.avg_price ?? 0)}</div>
                     </div>
                     <div>
                       <div className="text-text-muted text-xs mb-1">Sector</div>

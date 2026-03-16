@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 export default defineConfig({
+  base: './',
   server: {
     proxy: {
       '/api': {
@@ -21,9 +22,10 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    VitePWA({
+    // Disable PWA plugin entirely for Capacitor builds — SW doesn't work with file:// protocol
+    ...(process.env.VITE_CAPACITOR !== 'true' ? [VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
+      includeAssets: ['pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'InversionAPP',
         short_name: 'InversionAPP',
@@ -38,7 +40,6 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Cache-first for static assets
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/inversionappb-backend\.onrender\.com\/.*/i,
@@ -51,7 +52,7 @@ export default defineConfig({
           },
         ],
       },
-    }),
+    })] : []),
   ],
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },

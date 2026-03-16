@@ -49,9 +49,9 @@ export default function DividendTracker() {
   }
 
   const summary = summaryRes;
-  const chartData = chartRes || [];
-  const stocks = stockRes || [];
-  const history = historyRes || [];
+  const chartData = Array.isArray(chartRes) ? chartRes : [];
+  const stocks = Array.isArray(stockRes) ? stockRes : [];
+  const history = Array.isArray(historyRes) ? historyRes : [];
 
   // Sort history chronologically (assuming earliest first) to calculate running total
   const sortedHistory = [...history].sort((a, b) => new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime());

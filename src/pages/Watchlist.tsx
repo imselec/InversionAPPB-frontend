@@ -78,7 +78,7 @@ export default function Watchlist() {
     return <ErrorMessage message="Failed to load watchlist." />;
   }
 
-  let items = watchlistRes || [];
+  let items = Array.isArray(watchlistRes) ? watchlistRes : [];
   
   // Sort
   items = [...items].sort((a, b) => {

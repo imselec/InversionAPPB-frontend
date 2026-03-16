@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { portfolioService } from '@/services/portfolioService'
+import { portfolioService, Transaction } from '@/services/portfolioService'
 import { Spinner } from '@/components/ui/Spinner'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { formatCurrency, formatDate } from '@/utils/format'
@@ -19,8 +19,8 @@ export function InvestmentHistory() {
   })
 
   const totalInvested = transactions
-    ?.filter((t) => t.action === 'BUY')
-    .reduce((sum, t) => sum + t.total_amount, 0) ?? 0
+    ?.filter((t: Transaction) => t.action === 'BUY')
+    .reduce((sum: number, t: Transaction) => sum + t.total_amount, 0) ?? 0
 
   if (isLoading) return <div className="flex justify-center h-40 items-center"><Spinner size="lg" /></div>
   if (error) return <ErrorMessage message="No se pudo cargar el historial." />
@@ -65,7 +65,7 @@ export function InvestmentHistory() {
           <p className="text-text-secondary text-sm text-center py-8">Sin transacciones</p>
         ) : (
           <div className="divide-y divide-border">
-            {transactions.map((t) => (
+            {transactions.map((t: Transaction) => (
               <div key={t.id} className="px-4 py-3 flex justify-between items-center">
                 <div>
                   <div className="flex items-center gap-2">

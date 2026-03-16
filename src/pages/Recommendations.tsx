@@ -43,10 +43,12 @@ export default function Recommendations() {
   const isLoading = latestLoading || newLoading || sellLoading;
   
   const latest = latestRes;
-  const newTickers = newTickersRes || [];
-  const sellRecomms = sellRes || [];
+  const newTickers = Array.isArray(newTickersRes) ? newTickersRes : [];
+  const sellRecomms = Array.isArray(sellRes) ? sellRes : [];
 
-  const buyRecomms = latest?.recommendations.filter(r => r.action === 'BUY').sort((a,b) => a.priority - b.priority) || [];
+  const buyRecomms = Array.isArray(latest?.recommendations)
+    ? latest.recommendations.filter((r: any) => r.action === 'BUY').sort((a: any, b: any) => a.priority - b.priority)
+    : [];
 
   if (isLoading) {
     return (
