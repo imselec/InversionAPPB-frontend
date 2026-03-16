@@ -19,5 +19,11 @@ export const marketService = {
   getPrices: (tickers?: string[]) =>
     get<Record<string, PriceData>>('/market/prices', tickers ? { tickers: tickers.join(',') } : undefined),
   getChanges: () => get<Record<string, PriceData>>('/market/changes'),
-  getStatus: () => get<MarketStatus>('/market/status'),
+  // Backend returns { market_open: bool } — map to { is_open: bool }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getStatus: () => get<any>('/market/status').then((raw) => ({
+    is_open: raw.is_open ?? raw.market_open ?? false,
+    next_open: raw.next_open ?? '',
+    next_close: raw.next_close ?? '',
+  } as MarketStatus)),
 }
