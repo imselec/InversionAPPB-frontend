@@ -17,10 +17,10 @@ export default function Recommendations() {
   const { data: latestRes, isLoading: latestLoading, isError: latestError } = useQuery({
     queryKey: ['recommsLatest'], queryFn: recommendationService.getLatest
   });
-  const { data: newTickersRes, isLoading: newLoading } = useQuery({
+  const { data: newTickersRes } = useQuery({
     queryKey: ['recommsNew'], queryFn: recommendationService.getNewTickers
   });
-  const { data: sellRes, isLoading: sellLoading } = useQuery({
+  const { data: sellRes } = useQuery({
     queryKey: ['recommsSell'], queryFn: recommendationService.getSell
   });
 
