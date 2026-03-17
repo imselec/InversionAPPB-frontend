@@ -71,6 +71,8 @@ export default function PortfolioDashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['portfolioDashboard'] }),
   });
 
+  const closeModal = () => { setEditHolding(null); setAddMode(false); setSaveError(''); };
+
   const openEdit = (h: Holding) => {
     setEditHolding(h);
     setEditShares(h.shares.toString());
@@ -116,7 +118,7 @@ export default function PortfolioDashboard() {
   } = useQuery({
     queryKey: ['portfolioDashboard'],
     queryFn: portfolioService.getDashboard,
-    refetchInterval: isMarketOpen ? 300000 : false, // 5 min auto-refresh if open
+    refetchInterval: isMarketOpen ? 300000 : false,
   });
 
   if (dashLoading || marketLoading) {
@@ -153,11 +155,11 @@ export default function PortfolioDashboard() {
             </span>
           </div>
         </div>
-        
+
         <div className="text-4xl font-bold font-mono tracking-tight text-white mb-2">
           {formatCurrency(dashboard.total_value)}
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className={cn("flex items-center text-lg font-medium", totalReturnIsPositive ? "text-success" : "text-danger")}>
             {totalReturnIsPositive ? <ArrowUpRight className="w-5 h-5 mr-1" /> : <ArrowDownRight className="w-5 h-5 mr-1" />}
@@ -170,27 +172,17 @@ export default function PortfolioDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Sector Allocation Chart */}
         <div className="card">
           <h3 className="text-base font-semibold mb-4">Sector Allocation</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={sectorData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                  stroke="none"
-                >
+                <Pie data={sectorData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
                   {sectorData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={SECTOR_COLORS[entry.name] || '#6b7280'} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value: number) => formatCurrency(value)}
                   contentStyle={{ backgroundColor: '#111827', borderColor: '#1f2937', color: '#f9fafb' }}
                   itemStyle={{ color: '#f9fafb' }}
@@ -217,16 +209,15 @@ export default function PortfolioDashboard() {
             <Plus className="w-4 h-4" /> Add
           </button>
         </div>
-        
+
         <div className="flex flex-col">
           {holdings.map((holding) => {
             const isExpanded = expandedRow === holding.ticker;
             const isGain = (holding.gain_loss ?? 0) >= 0;
-            
+
             return (
               <div key={holding.ticker} className="border-b last:border-b-0 border-border">
-                {/* Main Row */}
-                <div 
+                <div
                   className="p-4 flex items-center justify-between cursor-pointer hover:bg-surface/50 transition-colors"
                   onClick={() => setExpandedRow(isExpanded ? null : holding.ticker)}
                 >
@@ -235,21 +226,16 @@ export default function PortfolioDashboard() {
                       <span className="font-bold text-sm">{holding.ticker}</span>
                     </div>
                     <div>
-                      <div className="font-medium text-text-primary text-sm flex gap-2 items-center">
-                        {holding.shares.toFixed(4)} shs
-                      </div>
+                      <div className="font-medium text-text-primary text-sm">{holding.shares.toFixed(4)} shs</div>
                       <div className="text-xs text-text-muted mt-1 w-24">
                         <div className="h-1 bg-background rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary rounded-full" 
-                            style={{ width: `${holding.allocation_pct}%` }}
-                          />
+                          <div className="h-full bg-primary rounded-full" style={{ width: `${holding.allocation_pct}%` }} />
                         </div>
                         <div className="mt-1">{holding.allocation_pct.toFixed(1)}% weight</div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
                     <div className="font-mono text-sm font-medium">{formatCurrency(holding.market_value)}</div>
                     <div className="text-xs text-text-secondary mt-1">{formatCurrency(holding.current_price)}</div>
@@ -268,7 +254,6 @@ export default function PortfolioDashboard() {
                   </div>
                 </div>
 
-                {/* Expanded Details */}
                 {isExpanded && (
                   <div className="p-4 bg-background/50 text-sm grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-border">
                     <div>
@@ -299,13 +284,13 @@ export default function PortfolioDashboard() {
 
       {/* Edit / Add Modal */}
       {(editHolding || addMode) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={closeModal}>
           <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-base font-semibold">
                 {addMode ? 'Add Holding' : `Edit ${editHolding?.ticker}`}
               </h3>
-              <button onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }} className="text-text-muted hover:text-text-primary">
+              <button onClick={closeModal} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -319,14 +304,14 @@ export default function PortfolioDashboard() {
                     placeholder="e.g. AAPL"
                     value={newTicker}
                     onChange={(e) => setNewTicker(e.target.value.toUpperCase())}
+                    autoCapitalize="characters"
                   />
                 </div>
               )}
               <div>
                 <label className="text-xs text-text-muted mb-1 block">Shares</label>
                 <input
-                  type="number"
-                  step="0.0001"
+                  inputMode="decimal"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
                   placeholder="0.0000"
                   value={editShares}
@@ -336,8 +321,7 @@ export default function PortfolioDashboard() {
               <div>
                 <label className="text-xs text-text-muted mb-1 block">Avg Price (optional)</label>
                 <input
-                  type="number"
-                  step="0.01"
+                  inputMode="decimal"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
                   placeholder="0.00"
                   value={editAvgPrice}
@@ -351,7 +335,7 @@ export default function PortfolioDashboard() {
             )}
 
             <div className="flex gap-3 mt-4">
-              <button onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }} className="flex-1 py-2.5 rounded-lg border border-border text-sm text-text-secondary hover:bg-background transition-colors">
+              <button onClick={closeModal} className="flex-1 py-2.5 rounded-lg border border-border text-sm text-text-secondary hover:bg-background transition-colors">
                 Cancel
               </button>
               <button
