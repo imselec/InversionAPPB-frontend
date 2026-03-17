@@ -44,15 +44,21 @@ export default function PerformanceAnalytics() {
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'total_return_pct', direction: 'desc' });
 
   const { data: perfRes, isLoading: perfLoading, isError: perfError } = useQuery({
-    queryKey: ['perfMetrics', period], queryFn: () => analyticsService.getPerformance(period)
+    queryKey: ['perfMetrics', period],
+    queryFn: () => analyticsService.getPerformance(period),
+    retry: 1,
   });
   
   const { data: returnsRes } = useQuery({
-    queryKey: ['perfReturns'], queryFn: analyticsService.getReturns
+    queryKey: ['perfReturns'],
+    queryFn: analyticsService.getReturns,
+    retry: 1,
   });
 
   const { data: volRes } = useQuery({
-    queryKey: ['perfVolatility'], queryFn: analyticsService.getVolatility
+    queryKey: ['perfVolatility'],
+    queryFn: analyticsService.getVolatility,
+    retry: 1,
   });
 
   const isLoading = perfLoading; // Only block on primary query

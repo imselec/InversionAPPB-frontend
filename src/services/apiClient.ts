@@ -28,6 +28,7 @@ function createClient(): AppApiClient {
   const instance = axios.create({
     baseURL: BASE_URL,
     headers: { 'Content-Type': 'application/json' },
+    timeout: 25000,
   }) as AppApiClient;
 
   // Inject auth token from localStorage on every request
@@ -50,12 +51,12 @@ function createClient(): AppApiClient {
       }
 
       config._retryCount = (config._retryCount ?? 0) + 1;
-      if (config._retryCount >= 3) {
+      if (config._retryCount >= 2) {
         const finalStatus = status ?? 0;
         return Promise.reject(new ApiError(finalStatus, error.message));
       }
 
-      const wait = [1000, 2000, 4000][config._retryCount - 1] ?? 4000;
+      const wait = 1500;
       await new Promise((r) => setTimeout(r, wait));
       return instance(config);
     },

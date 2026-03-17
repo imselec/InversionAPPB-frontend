@@ -26,7 +26,7 @@ export default function Settings() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { data: budgetRes, isLoading: budgetLoading } = useQuery({
-    queryKey: ['settingsBudget'], queryFn: settingsService.getBudget
+    queryKey: ['settingsBudget'], queryFn: settingsService.getBudget, retry: 1,
   });
 
   const { mutate: updateBudget, isPending: budgetUpdating } = useMutation({

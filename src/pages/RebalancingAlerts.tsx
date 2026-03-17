@@ -11,11 +11,15 @@ import { Badge } from '../components/ui/Badge';
 
 export default function RebalancingAlerts() {
   const { data: allocRes, isLoading: allocLoading, isError: allocError } = useQuery({
-    queryKey: ['portfolioAllocation'], queryFn: portfolioService.getAllocation
+    queryKey: ['portfolioAllocation'],
+    queryFn: portfolioService.getAllocation,
+    retry: 1,
   });
 
   useQuery({
-    queryKey: ['rebalanceTrades'], queryFn: recommendationService.getSell
+    queryKey: ['rebalanceTrades'],
+    queryFn: recommendationService.getSell,
+    retry: 1,
   });
 
   const isLoading = allocLoading; // Only block on primary query

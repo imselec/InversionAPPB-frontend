@@ -26,11 +26,11 @@ export default function Alerts() {
   const [condition, setCondition] = useState<'above' | 'below'>('above');
 
   const { data: alertsRes, isLoading: alertsLoading, isError: alertsError } = useQuery({
-    queryKey: ['alertsList'], queryFn: alertService.getAlerts
+    queryKey: ['alertsList'], queryFn: alertService.getAlerts, retry: 1,
   });
 
-  const { data: historyRes, isLoading: historyLoading } = useQuery({
-    queryKey: ['alertsHistory'], queryFn: () => alertService.getHistory(50)
+  const { data: historyRes } = useQuery({
+    queryKey: ['alertsHistory'], queryFn: () => alertService.getHistory(50), retry: 1,
   });
 
   const { mutate: toggleAlert } = useMutation({
@@ -63,7 +63,7 @@ export default function Alerts() {
     } as any);
   };
 
-  const isLoading = alertsLoading || historyLoading;
+  const isLoading = alertsLoading;
 
   if (isLoading) {
     return (

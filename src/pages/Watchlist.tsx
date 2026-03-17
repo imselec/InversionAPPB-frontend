@@ -19,7 +19,7 @@ export default function Watchlist() {
   const [selectedTickerForCompare, setSelectedTickerForCompare] = useState<string | null>(null);
 
   const { data: watchlistRes, isLoading: watchlistLoading, isError: watchlistError } = useQuery({
-    queryKey: ['watchlist'], queryFn: watchlistService.getWatchlist
+    queryKey: ['watchlist'], queryFn: watchlistService.getWatchlist, retry: 1,
   });
 
   const { data: compareRes, isLoading: compareLoading } = useQuery({

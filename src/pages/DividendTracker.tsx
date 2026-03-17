@@ -29,17 +29,19 @@ export default function DividendTracker() {
   });
 
   const { data: summaryRes, isLoading: sumLoading, isError: sumError } = useQuery({
-    queryKey: ['divSummary'], queryFn: dividendService.getSummary
+    queryKey: ['divSummary'], queryFn: dividendService.getSummary, retry: 1,
   });
-  const { data: chartRes, isLoading: chartLoading } = useQuery({
-    queryKey: ['divChart'], queryFn: dividendService.getChart
+  const { data: chartRes } = useQuery({
+    queryKey: ['divChart'], queryFn: dividendService.getChart, retry: 1,
   });
-  const { data: stockRes, isLoading: stockLoading } = useQuery({
-    queryKey: ['divByStock'], queryFn: dividendService.getByTicker
+  const { data: stockRes } = useQuery({
+    queryKey: ['divByStock'], queryFn: dividendService.getByTicker, retry: 1,
   });
-  const { data: historyRes, isLoading: historyLoading } = useQuery({
-    queryKey: ['divHistory'], queryFn: dividendService.getHistory
+  const { data: historyRes } = useQuery({
+    queryKey: ['divHistory'], queryFn: dividendService.getHistory, retry: 1,
   });
+
+  const isLoading = sumLoading;
 
   const { mutate: importDividends, isPending: isImporting } = useMutation({
     mutationFn: dividendService.importHistorical,
