@@ -67,8 +67,6 @@ export default function DividendTracker() {
     onError: () => alert('Error al registrar dividendo'),
   });
 
-  const isLoading = sumLoading || chartLoading || stockLoading || historyLoading;
-
   if (isLoading) {
     return (
       <div className="space-y-4">
