@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { RefreshCw, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { RefreshCw, ArrowUpRight, ArrowDownRight, Pencil, Trash2, Plus, X, Check } from 'lucide-react';
 
 import { portfolioService, Holding } from '../services/portfolioService';
 import { marketService } from '../services/marketService';
@@ -43,6 +43,51 @@ function processSectorData(holdings: Holding[]) {
 
 export default function PortfolioDashboard() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [editHolding, setEditHolding] = useState<Holding | null>(null);
+  const [editShares, setEditShares] = useState('');
+  const [editAvgPrice, setEditAvgPrice] = useState('');
+  const [addMode, setAddMode] = useState(false);
+  const [newTicker, setNewTicker] = useState('');
+  const queryClient = useQueryClient();
+
+  const { mutate: saveHolding, isPending: isSaving } = useMutation({
+    mutationFn: ({ ticker, shares, avg_price }: { ticker: string; shares: number; avg_price?: number }) =>
+      portfolioService.updateHolding(ticker, shares, avg_price),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolioDashboard'] });
+      setEditHolding(null);
+      setAddMode(false);
+      setNewTicker('');
+    },
+  });
+
+  const { mutate: removeHolding } = useMutation({
+    mutationFn: (ticker: string) => portfolioService.deleteHolding(ticker),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['portfolioDashboard'] }),
+  });
+
+  const openEdit = (h: Holding) => {
+    setEditHolding(h);
+    setEditShares(h.shares.toString());
+    setEditAvgPrice(h.avg_price?.toString() ?? '');
+    setAddMode(false);
+  };
+
+  const openAdd = () => {
+    setEditHolding(null);
+    setNewTicker('');
+    setEditShares('');
+    setEditAvgPrice('');
+    setAddMode(true);
+  };
+
+  const handleSave = () => {
+    const ticker = addMode ? newTicker.toUpperCase().trim() : editHolding!.ticker;
+    const shares = parseFloat(editShares);
+    const avg = parseFloat(editAvgPrice);
+    if (!ticker || isNaN(shares) || shares <= 0) return;
+    saveHolding({ ticker, shares, avg_price: isNaN(avg) ? undefined : avg });
+  };
 
   const { data: marketResponse, isLoading: marketLoading } = useQuery({
     queryKey: ['marketStatus'],
@@ -158,6 +203,9 @@ export default function PortfolioDashboard() {
       <div className="card overflow-hidden !p-0">
         <div className="p-4 border-b border-border flex justify-between items-center">
           <h3 className="text-base font-semibold">Holdings ({holdings.length})</h3>
+          <button onClick={openAdd} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+            <Plus className="w-4 h-4" /> Add
+          </button>
         </div>
         
         <div className="flex flex-col">
@@ -200,6 +248,14 @@ export default function PortfolioDashboard() {
                       {formatPercentage(holding.gain_loss_pct ?? 0)}
                     </div>
                   </div>
+                  <div className="flex flex-col gap-1 ml-2">
+                    <button onClick={(e) => { e.stopPropagation(); openEdit(holding); }} className="p-1.5 rounded hover:bg-surface text-text-muted hover:text-primary transition-colors">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); if (confirm(`Remove ${holding.ticker}?`)) removeHolding(holding.ticker); }} className="p-1.5 rounded hover:bg-surface text-text-muted hover:text-danger transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Expanded Details */}
@@ -230,6 +286,72 @@ export default function PortfolioDashboard() {
           })}
         </div>
       </div>
+
+      {/* Edit / Add Modal */}
+      {(editHolding || addMode) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => { setEditHolding(null); setAddMode(false); }}>
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-base font-semibold">
+                {addMode ? 'Add Holding' : `Edit ${editHolding?.ticker}`}
+              </h3>
+              <button onClick={() => { setEditHolding(null); setAddMode(false); }} className="text-text-muted hover:text-text-primary">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {addMode && (
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Ticker</label>
+                  <input
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:border-primary"
+                    placeholder="e.g. AAPL"
+                    value={newTicker}
+                    onChange={(e) => setNewTicker(e.target.value.toUpperCase())}
+                  />
+                </div>
+              )}
+              <div>
+                <label className="text-xs text-text-muted mb-1 block">Shares</label>
+                <input
+                  type="number"
+                  step="0.0001"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
+                  placeholder="0.0000"
+                  value={editShares}
+                  onChange={(e) => setEditShares(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-xs text-text-muted mb-1 block">Avg Price (optional)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
+                  placeholder="0.00"
+                  value={editAvgPrice}
+                  onChange={(e) => setEditAvgPrice(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => { setEditHolding(null); setAddMode(false); }} className="flex-1 py-2.5 rounded-lg border border-border text-sm text-text-secondary hover:bg-background transition-colors">
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                <Check className="w-4 h-4" />
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

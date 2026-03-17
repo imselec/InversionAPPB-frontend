@@ -1,4 +1,4 @@
-import { get, post } from './apiClient'
+import { get, post, put, del } from './apiClient'
 
 export interface Holding {
   ticker: string
@@ -81,4 +81,10 @@ export const portfolioService = {
     get<any>('/portfolio/history', params).then((raw) => raw.transactions ?? raw ?? []),
   postTransaction: (data: Omit<Transaction, 'id'>) =>
     post<Transaction>('/portfolio/transaction', data),
+  updateHolding: (ticker: string, shares: number, avg_price?: number) =>
+    put<{ ticker: string; shares: number; avg_price: number | null }>(
+      `/portfolio/holding/${ticker}`, { shares, avg_price: avg_price ?? null }
+    ),
+  deleteHolding: (ticker: string) =>
+    del<{ deleted: string }>(`/portfolio/holding/${ticker}`),
 }
