@@ -48,6 +48,7 @@ export default function PortfolioDashboard() {
   const [editAvgPrice, setEditAvgPrice] = useState('');
   const [addMode, setAddMode] = useState(false);
   const [newTicker, setNewTicker] = useState('');
+  const [saveError, setSaveError] = useState('');
   const queryClient = useQueryClient();
 
   const { mutate: saveHolding, isPending: isSaving } = useMutation({
@@ -58,6 +59,10 @@ export default function PortfolioDashboard() {
       setEditHolding(null);
       setAddMode(false);
       setNewTicker('');
+      setSaveError('');
+    },
+    onError: (err: any) => {
+      setSaveError(err?.message ?? 'Error saving. Check connection.');
     },
   });
 
@@ -71,6 +76,7 @@ export default function PortfolioDashboard() {
     setEditShares(h.shares.toString());
     setEditAvgPrice(h.avg_price?.toString() ?? '');
     setAddMode(false);
+    setSaveError('');
   };
 
   const openAdd = () => {
@@ -79,13 +85,17 @@ export default function PortfolioDashboard() {
     setEditShares('');
     setEditAvgPrice('');
     setAddMode(true);
+    setSaveError('');
   };
 
   const handleSave = () => {
     const ticker = addMode ? newTicker.toUpperCase().trim() : editHolding!.ticker;
-    const shares = parseFloat(editShares);
-    const avg = parseFloat(editAvgPrice);
-    if (!ticker || isNaN(shares) || shares <= 0) return;
+    // Replace comma with dot for locales that use comma as decimal separator
+    const shares = parseFloat(editShares.replace(',', '.'));
+    const avg = parseFloat(editAvgPrice.replace(',', '.'));
+    if (!ticker) { setSaveError('Ticker is required'); return; }
+    if (isNaN(shares) || shares <= 0) { setSaveError('Enter a valid number of shares'); return; }
+    setSaveError('');
     saveHolding({ ticker, shares, avg_price: isNaN(avg) ? undefined : avg });
   };
 
@@ -289,13 +299,13 @@ export default function PortfolioDashboard() {
 
       {/* Edit / Add Modal */}
       {(editHolding || addMode) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => { setEditHolding(null); setAddMode(false); }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }}>
           <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-base font-semibold">
                 {addMode ? 'Add Holding' : `Edit ${editHolding?.ticker}`}
               </h3>
-              <button onClick={() => { setEditHolding(null); setAddMode(false); }} className="text-text-muted hover:text-text-primary">
+              <button onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }} className="text-text-muted hover:text-text-primary">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -336,8 +346,12 @@ export default function PortfolioDashboard() {
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => { setEditHolding(null); setAddMode(false); }} className="flex-1 py-2.5 rounded-lg border border-border text-sm text-text-secondary hover:bg-background transition-colors">
+            {saveError && (
+              <p className="text-xs text-danger mt-3 text-center">{saveError}</p>
+            )}
+
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => { setEditHolding(null); setAddMode(false); setSaveError(''); }} className="flex-1 py-2.5 rounded-lg border border-border text-sm text-text-secondary hover:bg-background transition-colors">
                 Cancel
               </button>
               <button
