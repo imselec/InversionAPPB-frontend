@@ -8,11 +8,14 @@
     <meta name="description" content="Monthly Investment Advisor - Portfolio tracking and recommendations" />
     <title>InversionAPP</title>
     <script>
-      // Unregister stale service workers immediately (they break Capacitor file:// loading)
+      // Unregister ALL service workers — they crash in Capacitor WebView
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           regs.forEach(function(r) { r.unregister(); });
-        });
+        }).catch(function(){});
+        // Also prevent any new SW registration
+        var _orig = navigator.serviceWorker.register.bind(navigator.serviceWorker);
+        navigator.serviceWorker.register = function() { return Promise.reject(new Error('SW disabled')); };
       }
     </script>
   </head>

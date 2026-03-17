@@ -47,7 +47,9 @@ export const recommendationService = {
   getLatest: () => get<RecommendationRun>('/recommendations/latest'),
   getHistory: () => get<RecommendationRun[]>('/recommendations/history'),
   getNewTickers: () =>
-    post<NewTickerRecommendation[]>('/recommendations/new-tickers', {}),
+    post<{ recommendations: NewTickerRecommendation[] }>(
+      '/recommendations/new-tickers', {}
+    ),
   getSell: () =>
     post<SellRecommendation[]>('/recommendations/sell', {}),
 }

@@ -43,7 +43,9 @@ export default function Recommendations() {
   const isLoading = latestLoading;  // Only block on primary query
 
   const latest = latestRes;
-  const newTickers = Array.isArray(newTickersRes) ? newTickersRes : [];
+  const newTickers = Array.isArray(newTickersRes?.recommendations)
+    ? newTickersRes.recommendations
+    : [];
   const sellRecomms = Array.isArray(sellRes) ? sellRes : [];
 
   const buyRecomms = Array.isArray(latest?.recommendations)
