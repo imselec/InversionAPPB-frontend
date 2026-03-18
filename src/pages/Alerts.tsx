@@ -5,9 +5,9 @@ import { Bell, BellRing, BellOff, Plus, Trash2, Calendar, TrendingUp, AlertCircl
 
 import { alertService } from '../services/alertService';
 import { formatCurrency, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Badge } from '../components/ui/Badge';
+import { PageLoader } from '../components/ui/PageLoader';
 
 const HOLDINGS = [
   'AVGO', 'PG', 'NEE', 'JNJ', 'UPS', 'TXN', 'CVX', 'XOM', 'ABBV', 
@@ -66,14 +66,7 @@ export default function Alerts() {
   const isLoading = alertsLoading;
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <LoadingSkeleton className="h-16 w-full" />
-        <LoadingSkeleton className="h-32 w-full" />
-        <LoadingSkeleton className="h-32 w-full" />
-        <LoadingSkeleton className="h-32 w-full" />
-      </div>
-    );
+    return <PageLoader message="Cargando alertas..." />;
   }
 
   if (alertsError) {

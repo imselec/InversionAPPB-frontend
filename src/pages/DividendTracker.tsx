@@ -7,10 +7,10 @@ import { Calendar, DollarSign, TrendingUp, Download, Plus, X } from 'lucide-reac
 
 import { dividendService, ManualDividendRequest } from '../services/dividendService';
 import { formatCurrency, formatPercentage, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
+import { PageLoader } from '../components/ui/PageLoader';
 
 const PORTFOLIO_TICKERS = [
   'AVGO','PG','NEE','JNJ','UPS','TXN','CVX','XOM',
@@ -68,15 +68,7 @@ export default function DividendTracker() {
   });
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <LoadingSkeleton key={i} className="h-24 w-full" />)}
-        </div>
-        <LoadingSkeleton className="h-64 w-full" />
-        <LoadingSkeleton className="h-96 w-full" />
-      </div>
-    );
+    return <PageLoader message="Cargando dividendos..." />;
   }
 
   if (sumError) return <ErrorMessage message="Failed to load dividend data." />;

@@ -4,7 +4,7 @@ import { Save, RefreshCw, AlertCircle, ShieldCheck, Check } from 'lucide-react';
 
 import { settingsService } from '../services/settingsService';
 import { formatCurrency, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
+import { PageLoader } from '../components/ui/PageLoader';
 
 const HOLDINGS = [
   'AVGO', 'PG', 'NEE', 'JNJ', 'UPS', 'TXN', 'CVX', 'XOM', 'ABBV', 
@@ -56,13 +56,7 @@ export default function Settings() {
   const isLoading = budgetLoading;
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <LoadingSkeleton className="h-48 w-full" />
-        <LoadingSkeleton className="h-48 w-full" />
-        <LoadingSkeleton className="h-48 w-full" />
-      </div>
-    );
+    return <PageLoader message="Cargando configuración..." />;
   }
 
   const currentBudget = budgetRes?.monthly_budget || 300;

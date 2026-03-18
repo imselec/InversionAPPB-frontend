@@ -4,10 +4,10 @@ import { Search, X, BookmarkPlus, ArrowUpRight, ArrowDownRight, Scale } from 'lu
 
 import { watchlistService } from '../services/watchlistService';
 import { formatCurrency, formatPercentage, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Badge } from '../components/ui/Badge';
 import * as Dialog from '@radix-ui/react-dialog';
+import { PageLoader } from '../components/ui/PageLoader';
 
 export default function Watchlist() {
   const queryClient = useQueryClient();
@@ -65,13 +65,7 @@ export default function Watchlist() {
   };
 
   if (watchlistLoading) {
-    return (
-      <div className="space-y-4">
-        <LoadingSkeleton className="h-16 w-full" />
-        <LoadingSkeleton className="h-12 w-full" />
-        <LoadingSkeleton className="h-64 w-full" />
-      </div>
-    );
+    return <PageLoader message="Cargando watchlist..." />;
   }
 
   if (watchlistError) {
@@ -238,9 +232,8 @@ export default function Watchlist() {
             </div>
             
             {compareLoading ? (
-              <div className="p-6 space-y-4">
-                <LoadingSkeleton className="h-8 w-full" />
-                <LoadingSkeleton className="h-48 w-full" />
+              <div className="p-6 flex justify-center">
+                <PageLoader message="Comparando..." />
               </div>
             ) : (
               <div className="p-6">

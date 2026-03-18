@@ -5,9 +5,9 @@ import { BarChart2, AlertTriangle, TrendingDown, TrendingUp, Info } from 'lucide
 
 import { analyticsService } from '../services/analyticsService';
 import { formatCurrency, formatPercentage, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { StatCard } from '../components/ui/StatCard';
+import { PageLoader } from '../components/ui/PageLoader';
 
 // Mock generator for Comparison Chart
 const generateComparisonData = (period: string) => {
@@ -73,18 +73,7 @@ export default function PerformanceAnalytics() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <LoadingSkeleton className="h-24 w-full" />
-          <LoadingSkeleton className="h-24 w-full" />
-          <LoadingSkeleton className="h-24 w-full" />
-          <LoadingSkeleton className="h-24 w-full" />
-        </div>
-        <LoadingSkeleton className="h-64 w-full" />
-        <LoadingSkeleton className="h-96 w-full" />
-      </div>
-    );
+    return <PageLoader message="Calculando métricas de rendimiento..." />;
   }
 
   if (perfError) {

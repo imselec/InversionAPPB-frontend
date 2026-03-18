@@ -5,9 +5,9 @@ import { AlertCircle, CheckCircle2, AlertTriangle, ArrowRightLeft } from 'lucide
 import { portfolioService } from '../services/portfolioService';
 import { recommendationService } from '../services/recommendationService';
 import { formatCurrency, cn } from '../utils/utils';
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Badge } from '../components/ui/Badge';
+import { PageLoader } from '../components/ui/PageLoader';
 
 export default function RebalancingAlerts() {
   const { data: allocRes, isLoading: allocLoading, isError: allocError } = useQuery({
@@ -25,13 +25,7 @@ export default function RebalancingAlerts() {
   const isLoading = allocLoading; // Only block on primary query
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <LoadingSkeleton className="h-20 w-full" />
-        <LoadingSkeleton className="h-64 w-full" />
-        <LoadingSkeleton className="h-96 w-full" />
-      </div>
-    );
+    return <PageLoader message="Calculando balance del portfolio..." />;
   }
 
   if (allocError) {
