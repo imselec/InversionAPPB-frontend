@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { recommendationService } from '@/services/recommendationService'
+import { recommendationService, Recommendation } from '@/services/recommendationService'
 import { settingsService } from '@/services/settingsService'
 import { Spinner } from '@/components/ui/Spinner'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
@@ -74,8 +74,8 @@ export function RecommendationUI() {
           </div>
           <div className="divide-y divide-border">
             {latest.recommendations
-              .filter((r) => r.action === 'BUY')
-              .map((r) => (
+              .filter((r: Recommendation) => r.action === 'BUY')
+              .map((r: Recommendation) => (
                 <div key={r.ticker} className="px-4 py-3 border-l-2 border-l-accent">
                   <div className="flex justify-between items-start">
                     <div>

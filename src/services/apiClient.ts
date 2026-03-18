@@ -28,7 +28,7 @@ function createClient(): AppApiClient {
   const instance = axios.create({
     baseURL: BASE_URL,
     headers: { 'Content-Type': 'application/json' },
-    timeout: 25000,
+    timeout: 60000, // 60s — Render cold start can take 50s+
   }) as AppApiClient;
 
   // Inject auth token from localStorage on every request

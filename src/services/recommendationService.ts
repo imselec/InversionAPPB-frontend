@@ -44,12 +44,19 @@ export interface NewTickerRecommendation {
 export const recommendationService = {
   generate: (budget: number) =>
     post<RecommendationRun>('/recommendations/generate', { budget }),
-  getLatest: () => get<RecommendationRun>('/recommendations/latest'),
+  getLatest: () =>
+    get<RecommendationRun>('/recommendations/latest').then(r => {
+      // Backend returns {message: "..."} when no runs exist
+      if (!r || !Array.isArray((r as any).recommendations)) return null as any;
+      return r;
+    }),
   getHistory: () => get<RecommendationRun[]>('/recommendations/history'),
   getNewTickers: () =>
     post<{ recommendations: NewTickerRecommendation[] }>(
       '/recommendations/new-tickers', {}
     ),
   getSell: () =>
-    post<SellRecommendation[]>('/recommendations/sell', {}),
+    post<{ recommendations: SellRecommendation[]; count: number }>(
+      '/recommendations/sell', {}
+    ).then(r => r.recommendations ?? []),
 }

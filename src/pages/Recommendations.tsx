@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Tabs from '@radix-ui/react-tabs';
 import { Minus, Plus, Zap, TrendingUp, Search, Info } from 'lucide-react';
 
-import { recommendationService } from '../services/recommendationService';
+import { recommendationService, Recommendation } from '../services/recommendationService';
 import { formatCurrency, cn } from '../utils/utils';
 import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { Badge } from '../components/ui/Badge';
@@ -49,7 +49,7 @@ export default function Recommendations() {
   const sellRecomms = Array.isArray(sellRes) ? sellRes : [];
 
   const buyRecomms = Array.isArray(latest?.recommendations)
-    ? latest.recommendations.filter((r: any) => r.action === 'BUY').sort((a: any, b: any) => a.priority - b.priority)
+    ? latest.recommendations.filter((r: Recommendation) => r.action === 'BUY').sort((a: Recommendation, b: Recommendation) => a.priority - b.priority)
     : [];
 
   if (isLoading) {
@@ -146,7 +146,7 @@ export default function Recommendations() {
             {buyRecomms.length === 0 ? (
               <div className="p-8 text-center text-text-muted">No buy recommendations generated for this budget.</div>
             ) : (
-              buyRecomms.map((rec) => {
+              buyRecomms.map((rec: Recommendation) => {
                 const isTop = rec.priority === 1;
                 const isExpanded = expandedReasoning === rec.ticker;
                 

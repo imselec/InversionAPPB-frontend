@@ -11,7 +11,7 @@ export interface AllocationTargets {
 export const settingsService = {
   getBudget: () => get<BudgetSettings>('/settings/budget'),
   updateBudget: (budget: number) =>
-    put<BudgetSettings>('/settings/budget', { monthly_budget: budget }),
+    put<BudgetSettings>('/settings/budget', { budget }),
   getAllocationTargets: () => get<AllocationTargets>('/settings/allocation-targets'),
   updateAllocationTargets: (targets: Record<string, number>) =>
     put<AllocationTargets>('/settings/allocation-targets', { targets }),

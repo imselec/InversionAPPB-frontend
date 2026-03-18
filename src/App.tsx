@@ -2,8 +2,9 @@ import { lazy, Suspense } from 'react';
 import { HashRouter as BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { LoadingSkeleton } from './components/ui/LoadingSkeleton';
+import { AppLoader } from './components/ui/AppLoader';
+import { useBackendReady } from './hooks/useBackendReady';
 
-// Lazy loading for code splitting — reduces initial bundle size
 const PortfolioDashboard = lazy(() => import('./pages/PortfolioDashboard'));
 const DividendTracker = lazy(() => import('./pages/DividendTracker'));
 const Recommendations = lazy(() => import('./pages/Recommendations'));
@@ -24,7 +25,7 @@ function PageFallback() {
   );
 }
 
-function App() {
+function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
@@ -44,6 +45,12 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+}
+
+function App() {
+  const backendReady = useBackendReady();
+  if (!backendReady) return <AppLoader />;
+  return <AppRoutes />;
 }
 
 export default App;
